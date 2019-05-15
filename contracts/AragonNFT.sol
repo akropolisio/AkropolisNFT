@@ -15,6 +15,10 @@ import "@aragon/os/contracts/apps/AragonApp.sol";
  */
 contract AragonNFT is ERC721, AragonApp {
 
+    /// Events
+    event Mint(address indexed holder, uint256 tokenId);
+    event Burn(uint256 indexed tokenId);
+
     /// ACL
     bytes32 constant public MINT_ROLE = keccak256("MINT_ROLE");
     bytes32 constant public BURN_ROLE = keccak256("BURN_ROLE");
@@ -41,6 +45,7 @@ contract AragonNFT is ERC721, AragonApp {
      */
     function mint(address _to, uint256 _tokenId) auth(MINT_ROLE) public {
         _mint(_to, _tokenId);
+        emit Mint(_to, _tokenId);
     }
 
     /**
@@ -52,6 +57,7 @@ contract AragonNFT is ERC721, AragonApp {
     function burn(uint256 _tokenId) auth(BURN_ROLE) public {
         require(msg.sender == _ownerOf(_tokenId));
         _burn(_ownerOf(_tokenId), _tokenId);
+        emit Burn(_tokenId);
     }
 
     /**
